@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 export function SwitchScreen({ roundNumber, totalRounds }: { roundNumber: number; totalRounds: number }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="min-h-screen flex flex-col items-center justify-center p-6"
+      className="absolute inset-0 flex flex-col items-center justify-center p-6 h-full w-full"
       style={{ background: "radial-gradient(ellipse at center, #1a0a2e 0%, #0a0a0a 70%)" }}>
       <motion.div
         initial={{ scale: 0.3, opacity: 0, rotate: -10 }}

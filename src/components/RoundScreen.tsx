@@ -21,7 +21,7 @@ export function RoundScreen({ round, totalRounds, timeLeft, totalTime, iceBreake
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden"
+      className="absolute inset-0 flex flex-col items-center justify-center p-6 h-full w-full overflow-hidden"
       style={{
         background: isCritical
           ? "radial-gradient(ellipse at center, #2a0505 0%, #0a0a0a 70%)"

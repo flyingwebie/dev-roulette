@@ -116,23 +116,39 @@ export default function DevRoulette() {
   };
 
   return (
-    <div className="w-full h-full" style={{ background: "#0a0a0a" }}>
+    <div className="w-full h-screen overflow-hidden flex flex-col relative" style={{ background: "#0a0a0a" }}>
       <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
-      <AnimatePresence mode="wait">
-        {phase === PHASE_SETUP && <SetupScreen key="setup" onStart={handleStart} />}
-        {phase === PHASE_ROUND && config && (
-          <RoundScreen key={`round-${currentRound}`}
-            round={currentRound} totalRounds={config.rounds}
-            timeLeft={timeLeft} totalTime={config.duration}
-            iceBreaker={iceBreakers[currentRound - 1] || ICE_BREAKERS[0]}
-            isPaused={isPaused} onPause={handlePause} onResume={handleResume} onSkip={handleSkip} />
-        )}
-        {phase === PHASE_SWITCH && config && <SwitchScreen key="switch" roundNumber={currentRound + 1} totalRounds={config.rounds} />}
-        {phase === PHASE_DONE && config && <DoneScreen key="done" totalRounds={config.rounds} onRestart={handleRestart} />}
-      </AnimatePresence>
-      <div className="text-center w-full align-center justify-center pb-4">
-        <p className="text-gray-500 text-sm">Made with ❤️ by <a href="https://www.meetup.com/corkdevs" target="_blank" rel="noopener noreferrer">Cork Devs</a></p>
+      {phase !== PHASE_SETUP && (
+        <button
+          onClick={handleRestart}
+          className="absolute top-6 right-6 z-50 p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer"
+          title="End Event"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      )}
+
+      <div className="flex-1 relative w-full h-full">
+        <AnimatePresence mode="wait">
+          {phase === PHASE_SETUP && <SetupScreen key="setup" onStart={handleStart} />}
+          {phase === PHASE_ROUND && config && (
+            <RoundScreen key={`round-${currentRound}`}
+              round={currentRound} totalRounds={config.rounds}
+              timeLeft={timeLeft} totalTime={config.duration}
+              iceBreaker={iceBreakers[currentRound - 1] || ICE_BREAKERS[0]}
+              isPaused={isPaused} onPause={handlePause} onResume={handleResume} onSkip={handleSkip} />
+          )}
+          {phase === PHASE_SWITCH && config && <SwitchScreen key="switch" roundNumber={currentRound + 1} totalRounds={config.rounds} />}
+          {phase === PHASE_DONE && config && <DoneScreen key="done" totalRounds={config.rounds} onRestart={handleRestart} />}
+        </AnimatePresence>
+      </div>
+
+      <div className="text-center w-full shrink-0 pb-4 z-10 relative">
+        <p className="text-gray-500 text-sm">Made with ❤️ by <a href="https://www.meetup.com/corkdevs" target="_blank" rel="noopener noreferrer">Cork Devs</a> - Version 1.1.0</p>
       </div>
     </div>
   );

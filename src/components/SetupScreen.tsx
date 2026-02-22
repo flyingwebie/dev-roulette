@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import type { Config } from "../types";
-import { unlockAudio } from "../utils/audio";
+import { unlockAudio, playStartEvent } from "../utils/audio";
 
 export function SetupScreen({ onStart }: { onStart: (cfg: Config) => void }) {
   const [rounds, setRounds] = useState(6);
@@ -16,7 +16,7 @@ export function SetupScreen({ onStart }: { onStart: (cfg: Config) => void }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center p-6"
+      className="absolute inset-0 flex items-center justify-center p-6 h-full w-full"
       style={{
         background: "radial-gradient(ellipse at 20% 50%, #1a0a2e 0%, #0d0d0d 50%, #0a0a0a 100%)",
       }}
@@ -113,7 +113,11 @@ export function SetupScreen({ onStart }: { onStart: (cfg: Config) => void }) {
 
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5, duration: 0.5 }} className="mt-8">
           <button
-            onClick={() => { unlockAudio(); onStart({ rounds, duration: duration * 60, breakDuration }); }}
+            onClick={() => { 
+              unlockAudio(); 
+              playStartEvent();
+              onStart({ rounds, duration: duration * 60, breakDuration }); 
+            }}
             className="w-full py-5 rounded-2xl text-lg font-black tracking-wider uppercase transition-all active:scale-[0.98]"
             style={{
               fontFamily: "'Instrument Sans', sans-serif",

@@ -101,3 +101,25 @@ export function playTick() {
     console.warn("Tick failed:", e);
   }
 }
+
+export function playStartEvent() {
+  try {
+    const ctx = ensureAudio();
+    if (!ctx || ctx.state === "closed") return;
+    const now = ctx.currentTime;
+
+    const o1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    o1.type = "sine";
+    o1.frequency.setValueAtTime(440, now);
+    o1.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+    g1.gain.setValueAtTime(0, now);
+    g1.gain.linearRampToValueAtTime(0.5, now + 0.1);
+    g1.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    o1.connect(g1).connect(ctx.destination);
+    o1.start(now);
+    o1.stop(now + 0.7);
+  } catch (e) {
+    console.warn("Start event sound failed:", e);
+  }
+}
