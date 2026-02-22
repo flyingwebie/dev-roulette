@@ -34,7 +34,7 @@ export function SwitchScreen({ roundNumber, totalRounds }: { roundNumber: number
           Move to your next conversation
         </motion.p>
         <motion.div
-          initial={{ y: 20, opacity: 1 }}
+          initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
           className="mt-4 text-sm"
