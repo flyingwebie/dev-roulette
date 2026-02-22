@@ -1,22 +1,36 @@
-import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { Config } from "./types";
 import { ICE_BREAKERS } from "./constants/icebreakers";
-import { PHASE_SETUP, PHASE_ROUND, PHASE_SWITCH, PHASE_DONE } from "./constants/phases";
+import { PHASE_DONE, PHASE_ROUND, PHASE_SETUP, PHASE_SWITCH } from "./constants/phases";
+import type { Config } from "./types";
 import { playBuzzer, playTick } from "./utils/audio";
 import { shuffleArray } from "./utils/helpers";
 
-import { SetupScreen } from "./components/SetupScreen";
-import { RoundScreen } from "./components/RoundScreen";
-import { SwitchScreen } from "./components/SwitchScreen";
 import { DoneScreen } from "./components/DoneScreen";
+import { RoundScreen } from "./components/RoundScreen";
+import { SetupScreen } from "./components/SetupScreen";
+import { SwitchScreen } from "./components/SwitchScreen";
 
 // ═══════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════
 export default function DevRoulette() {
+  // Robust mobile viewport height fix for all browsers
+  useEffect(() => {
+    const setAppHeight = () => {
+      document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+    };
+    setAppHeight();
+    window.addEventListener("resize", setAppHeight);
+    window.addEventListener("orientationchange", setAppHeight);
+    return () => {
+      window.removeEventListener("resize", setAppHeight);
+      window.removeEventListener("orientationchange", setAppHeight);
+    };
+  }, []);
   const [phase, setPhase] = useState(PHASE_SETUP);
+
   const [config, setConfig] = useState<Config | null>(null);
   const [currentRound, setCurrentRound] = useState(1);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -29,9 +43,15 @@ export default function DevRoulette() {
   const currentRoundRef = useRef(1);
   const configRef = useRef<Config | null>(null);
 
-  useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
-  useEffect(() => { currentRoundRef.current = currentRound; }, [currentRound]);
-  useEffect(() => { configRef.current = config; }, [config]);
+  useEffect(() => {
+    timeLeftRef.current = timeLeft;
+  }, [timeLeft]);
+  useEffect(() => {
+    currentRoundRef.current = currentRound;
+  }, [currentRound]);
+  useEffect(() => {
+    configRef.current = config;
+  }, [config]);
 
   const endRound = useCallback(() => {
     clearInterval(timerRef.current);
@@ -95,8 +115,13 @@ export default function DevRoulette() {
     return () => clearInterval(timerRef.current);
   }, [phase, isPaused, endRound]);
 
-  const handlePause = () => { setIsPaused(true); clearInterval(timerRef.current); };
-  const handleResume = () => { setIsPaused(false); };
+  const handlePause = () => {
+    setIsPaused(true);
+    clearInterval(timerRef.current);
+  };
+  const handleResume = () => {
+    setIsPaused(false);
+  };
 
   const handleSkip = () => {
     if (!config) return;
@@ -116,40 +141,101 @@ export default function DevRoulette() {
   };
 
   return (
-    <div className="w-full h-screen overflow-hidden flex flex-col relative" style={{ background: "#0a0a0a" }}>
-      <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <div
+      className="app-root relative flex flex-col items-center justify-between overflow-auto"
+      style={{
+        background: "#0a0a0a",
+      }}>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet"
+      />
 
       {phase !== PHASE_SETUP && (
         <button
           onClick={handleRestart}
           className="absolute top-6 right-6 z-50 p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer"
-          title="End Event"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+          title="End Event">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round">
+            <line
+              x1="18"
+              y1="6"
+              x2="6"
+              y2="18"></line>
+            <line
+              x1="6"
+              y1="6"
+              x2="18"
+              y2="18"></line>
           </svg>
         </button>
       )}
 
-      <div className="flex-1 relative w-full h-full">
+      <div
+        className="flex-1 w-full flex flex-col items-center justify-center p-6 min-h-0"
+        style={{ minHeight: 0 }}>
         <AnimatePresence mode="wait">
-          {phase === PHASE_SETUP && <SetupScreen key="setup" onStart={handleStart} />}
-          {phase === PHASE_ROUND && config && (
-            <RoundScreen key={`round-${currentRound}`}
-              round={currentRound} totalRounds={config.rounds}
-              timeLeft={timeLeft} totalTime={config.duration}
-              iceBreaker={iceBreakers[currentRound - 1] || ICE_BREAKERS[0]}
-              isPaused={isPaused} onPause={handlePause} onResume={handleResume} onSkip={handleSkip} />
+          {phase === PHASE_SETUP && (
+            <SetupScreen
+              key="setup"
+              onStart={handleStart}
+            />
           )}
-          {phase === PHASE_SWITCH && config && <SwitchScreen key="switch" roundNumber={currentRound + 1} totalRounds={config.rounds} />}
-          {phase === PHASE_DONE && config && <DoneScreen key="done" totalRounds={config.rounds} onRestart={handleRestart} />}
+          {phase === PHASE_ROUND && config && (
+            <RoundScreen
+              key={`round-${currentRound}`}
+              round={currentRound}
+              totalRounds={config.rounds}
+              timeLeft={timeLeft}
+              totalTime={config.duration}
+              iceBreaker={iceBreakers[currentRound - 1] || ICE_BREAKERS[0]}
+              isPaused={isPaused}
+              onPause={handlePause}
+              onResume={handleResume}
+              onSkip={handleSkip}
+            />
+          )}
+          {phase === PHASE_SWITCH && config && (
+            <SwitchScreen
+              key="switch"
+              roundNumber={currentRound + 1}
+              totalRounds={config.rounds}
+            />
+          )}
+          {phase === PHASE_DONE && config && (
+            <DoneScreen
+              key="done"
+              totalRounds={config.rounds}
+              onRestart={handleRestart}
+            />
+          )}
         </AnimatePresence>
       </div>
-
-      <div className="text-center w-full shrink-0 pb-4 z-10 relative">
-        <p className="text-gray-500 text-sm">Made with ❤️ by <a href="http://www.meetup.com/corkdevs" target="_blank" rel="noopener noreferrer">Cork Devs</a> - Version 1.2.1</p>
-      </div>
+      <footer
+        className="w-full text-center pb-4 z-10 mt-auto"
+        style={{
+          position: "relative",
+          bottom: 0,
+        }}>
+        <p className="text-gray-500 text-sm">
+          Made with ❤️ by{" "}
+          <a
+            href="http://www.meetup.com/corkdevs"
+            target="_blank"
+            rel="noopener noreferrer">
+            Cork Devs
+          </a>{" "}
+          - Version 1.2.1
+        </p>
+      </footer>
     </div>
   );
 }
