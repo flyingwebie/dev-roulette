@@ -1,22 +1,36 @@
-import { useState, useEffect, useCallback, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { Config } from "./types";
 import { ICE_BREAKERS } from "./constants/icebreakers";
-import { PHASE_SETUP, PHASE_ROUND, PHASE_SWITCH, PHASE_DONE } from "./constants/phases";
+import { PHASE_DONE, PHASE_ROUND, PHASE_SETUP, PHASE_SWITCH } from "./constants/phases";
+import type { Config } from "./types";
 import { playBuzzer, playTick } from "./utils/audio";
 import { shuffleArray } from "./utils/helpers";
 
-import { SetupScreen } from "./components/SetupScreen";
-import { RoundScreen } from "./components/RoundScreen";
-import { SwitchScreen } from "./components/SwitchScreen";
 import { DoneScreen } from "./components/DoneScreen";
+import { RoundScreen } from "./components/RoundScreen";
+import { SetupScreen } from "./components/SetupScreen";
+import { SwitchScreen } from "./components/SwitchScreen";
 
 // ═══════════════════════════════════════
 // MAIN APP
 // ═══════════════════════════════════════
 export default function DevRoulette() {
+  // Robust mobile viewport height fix for all browsers
+  useEffect(() => {
+    const setAppHeight = () => {
+      document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+    };
+    setAppHeight();
+    window.addEventListener("resize", setAppHeight);
+    window.addEventListener("orientationchange", setAppHeight);
+    return () => {
+      window.removeEventListener("resize", setAppHeight);
+      window.removeEventListener("orientationchange", setAppHeight);
+    };
+  }, []);
   const [phase, setPhase] = useState(PHASE_SETUP);
+
   const [config, setConfig] = useState<Config | null>(null);
   const [currentRound, setCurrentRound] = useState(1);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -129,7 +143,9 @@ export default function DevRoulette() {
   return (
     <div
       className="app-root relative flex flex-col items-center justify-between overflow-auto"
-      style={{ background: "#0a0a0a" }}>
+      style={{
+        background: "#0a0a0a",
+      }}>
       <link
         href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
         rel="stylesheet"
@@ -163,7 +179,9 @@ export default function DevRoulette() {
         </button>
       )}
 
-      <div className="flex-1 relative w-full h-full">
+      <div
+        className="flex-1 w-full flex flex-col items-center justify-center p-6 min-h-0"
+        style={{ minHeight: 0 }}>
         <AnimatePresence mode="wait">
           {phase === PHASE_SETUP && (
             <SetupScreen
@@ -201,8 +219,12 @@ export default function DevRoulette() {
           )}
         </AnimatePresence>
       </div>
-
-      <div className="text-center w-full shrink-0 pb-4 z-10 relative">
+      <footer
+        className="w-full text-center pb-4 z-10 mt-auto"
+        style={{
+          position: "relative",
+          bottom: 0,
+        }}>
         <p className="text-gray-500 text-sm">
           Made with ❤️ by{" "}
           <a
@@ -213,7 +235,7 @@ export default function DevRoulette() {
           </a>{" "}
           - Version 1.2.1
         </p>
-      </div>
+      </footer>
     </div>
   );
 }
