@@ -148,7 +148,7 @@ export default function DevRoulette() {
       </div>
 
       <div className="text-center w-full shrink-0 pb-4 z-10 relative">
-        <p className="text-gray-500 text-sm">Made with ❤️ by <a href="https://www.meetup.com/corkdevs" target="_blank" rel="noopener noreferrer">Cork Devs</a> - Version 1.1.0</p>
+        <p className="text-gray-500 text-sm">Made with ❤️ by <a href="https://www.meetup.com/corkdevs" target="_blank" rel="noopener noreferrer">Cork Devs</a> - Version 1.2.0</p>
       </div>
     </div>
   );
