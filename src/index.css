@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+:root {
+  --app-height: 100dvh;
+}
+
+.app-root {
+  min-height: var(--app-height);
+  @media only screen and (max-width: 600px) {
+    height: auto;
+  }
+  button {
+    cursor: pointer;
+  }
+}
