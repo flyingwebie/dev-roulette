@@ -26,7 +26,7 @@ export function SetupScreen({ onStart }: { onStart: (cfg: Config) => void }) {
       {/* ── Help / Preview Trigger ── */}
       <button
         onClick={() => setShowPreview(true)}
-        className="absolute bottom-6 z-40 px-5 py-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60 hover:text-[#f97316] hover:border-[#f97316]/50 transition-all cursor-pointer backdrop-blur-md flex items-center gap-3"
+        className="absolute bottom-6 z-40 px-5 py-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white/60 hover:text-[#f97316] hover:border-[#f97316]/50 transition-all cursor-pointer backdrop-blur-md flex items-center gap-3"
         title="Preview Questions"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
